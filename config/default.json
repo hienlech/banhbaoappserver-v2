@@ -1,8 +1,8 @@
 {
-    "mongoURI": "mongodb://localhost:27017/chatdating",
+    "mongoURI": "mongodb://0.0.0.0:27017/chatdating",
     "jwtSecret": "chatdating secret chatdating",
-    "gmail": "blwinfo196@gmail.com",
-    "pass": "0905121479qQ!@#",
+    "email": "vnchat@blwsmartware.net",
+    "pass": "Fp2LL85F0eik3P6r",
     "text": "Code reset password: ",
     "subject": "[CODE RESET]",
     "key": "root123!@#adm",

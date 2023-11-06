@@ -120,7 +120,7 @@ router.post('/facebook', async(req, res, next) => {
         }).then((user) => {
             if (!user) {
                 const newUser = new User({
-                    username: '',
+                    username: datajson.id,
                     firstname: datajson.first_name,
                     lastname: datajson.last_name,
                     email: datajson.email,

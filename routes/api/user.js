@@ -11,7 +11,7 @@ const Link = require('../../models/Link');
 const User = require('../../models/User');
 const Feedback = require('../../models/Feedback');
 const ResetPass = require('../../models/resetPass');
-const ALPHABET = '0123456789ABCDEFGHIKLMNOPQRSTUVWXYZ';
+const ALPHABET = '0123456789';
 
 const RoomDetails = require("../../models/Database");
 
@@ -463,18 +463,90 @@ router.post('/resetpassword', async (req, res) => {
     }
 });
 
+router.post('/email', async (req, res) => {
+    const email = req.body.email;
+    const resetPass = await ResetPass.find({
+        email
+    });
+
+    console.log('resetPass', resetPass);
+    let user = await User.findOne({
+        email
+    });
+
+    if (!user) {
+        user = new User({
+            email
+        });
+
+        await user.save();
+    }
+
+    _id = user._id;
+    const mailUser = email;
+    const code = generate();
+
+    if (resetPass.length != 0) {
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(code, salt, async (err, hash) => {
+                if (err) {
+                    return res.status(401).json({
+                        status: 401,
+                        msg: 'bcrypt code failed',
+                    });
+                }
+                await ResetPass.findOneAndUpdate({
+                    email
+                }, {
+                    enCode: hash
+                });
+            });
+        });
+    } else {
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(code, salt, async (err, hash) => {
+                if (err) {
+                    return res.status(401).json({
+                        status: 401,
+                        msg: 'bcrypt code failed',
+                    });
+                }
+                await ResetPass.create({
+                    email: mailUser,
+                    userId: _id,
+                    enCode: hash,
+                });
+            });
+        });
+    }
+    try {
+        sendmail(mailUser, code);
+        console.log('We sent code to', mailUser);
+        return res.status(200).json({
+            status: 200,
+            msg: 'We sent code to your email'
+        });
+    } catch (error) {
+        console.log('We sent code Erorr', error);
+        return res.status(401).json({
+            status: 401,
+            msg: 'Sent code fail',
+        });
+    }
+});
+
 async function sendmail(mailUser, code) {
     let transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
+        host: 'stmp.larksuite.com',
         port: 465,
         secure: true,
         auth: {
-            user: config.get('gmail'),
+            user: config.get('email'),
             pass: config.get('pass'),
         },
     });
     await transporter.sendMail({
-        from: config.get('gmail'),
+        from: config.get('email'),
         to: mailUser,
         subject: config.get("subject"),
         text: config.get("text") + code
@@ -515,6 +587,73 @@ router.post('/confirm', async (req, res) => {
         msg: 'Confirm code OK',
         // userId: userId
     });
+});
+
+router.post('/check_otp', async (req, res) => {
+    const {
+        code,
+        email,
+        token_device
+    } = req.body;
+
+    const resetCode = await ResetPass.findOne({
+        email,
+    });
+
+    const user = await User.findOne({
+        email,
+    });
+
+    const userId = user._id;
+
+    if (!resetCode) {
+        console.log('resetCode fail');
+        return res.status(404).json({
+            status: 404,
+            msg: 'Code not found',
+        });
+    }
+    let enCode = resetCode.enCode;
+    const match = await bcrypt.compare(code, enCode);
+    if (!match) {
+        console.log('resetCode not match');
+        return res.status(404).json({
+            status: 404,
+            msg: 'Code Fail',
+        });
+    }
+
+    // remove if exist and authenticate success
+    await ResetPass.findOneAndRemove({
+        email,
+    });
+    
+    jwt.sign({
+        id: user.id,
+        email: user.email,
+        token_device
+    },
+        config.get('jwtSecret'), {
+        expiresIn: 8640000,
+    },
+        (err, token) => {
+            if (err) {
+                return res.status(401).json({
+                    status: 401,
+                    msg: 'jwt failed',
+                });
+            }
+            return res.status(200).json({
+                status: 200,
+                user: {
+                    token,
+                    _id: user.id,
+                    email: user.email,
+                    token_device
+                },
+            });
+        },
+    );
 });
 
 router.post('/changepassword', async (req, res) => {

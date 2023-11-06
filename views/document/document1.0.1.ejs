@@ -722,6 +722,113 @@
                     </tr>
                     </tbody>
             </table>
+            <!--email-->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="alert alert-success" role="alert">#email</div>
+                        </th>
+                        <td>Post</td>
+                        <td><code>/api/user/email</pre></td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<th scope="row">Header</th>
+				<td>application/json; charset=utf-8</td>
+				<td><code></code></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Body</th>
+                        <td>required</td>
+                        <td>
+                            <code>
+                                {<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp; "email" : "yentth237@gmail.com"<br/>
+                               }<br/>
+						</code>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Result</th>
+                        <td>Successfully</td>
+                        <td><code>{ <br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"status": 200,<br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"msg": "We sent code to your email"<br/>
+				}</code></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Result</th>
+                        <td>Failed</td>
+                        <td><code>{ <br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"status" : 401,<br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"msg" : "Sent code fail" <br/>
+				}
+				</code></td>
+                    </tr>
+                    </tbody>
+            </table>
+            <!--check_otp-->
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">
+                            <div class="alert alert-success" role="alert">#check_otp</div>
+                        </th>
+                        <td>Post</td>
+                        <td><code>/api/user/check_otp</pre></td>
+			</tr>
+			</thead>
+			<tbody>
+			<tr>
+				<th scope="row">Header</th>
+				<td>application/json; charset=utf-8</td>
+				<td><code></code></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Body</th>
+                        <td>Required</td>
+                        <td>
+                            <code>
+                                {<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp; "email" : "yentth237@gmail.com"<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp; "code" : "HD45DS"<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp; "token_device" : "gfdgdfgfdgdfgd"<br/>
+                               }<br/>
+						</code>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Result</th>
+                        <td>Successfully</td>
+                        <td><code>{ <br/>
+                            "status": 200,<br/>
+                            "user": {<br/> 
+                                    &nbsp;&nbsp;&nbsp;&nbsp;"token": "AAA.BBB.CCC",<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;"_id": "5efc8e8ea0358c106cd8c38d",<br/>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;"email": "abc@gmail.com"<br/>
+                            
+                            &nbsp;&nbsp;&nbsp;&nbsp;} <br/>
+                        }<br/></code></td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Result</th>
+                        <td>Failed</td>
+                        <td><code>{ <br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"status" : 404,<br/>
+                            &nbsp;&nbsp;&nbsp;&nbsp;"msg" : "Code not found" <br/>
+				}
+				</code>
+                <code>{ <br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"status" : 404,<br/>
+                    &nbsp;&nbsp;&nbsp;&nbsp;"msg" : "Code Fail" <br/>
+        }
+        </code>
+            </td>
+                    </tr>
+                    </tbody>
+            </table>
             <!--confirm-->
             <table class="table table-bordered">
                 <thead>
